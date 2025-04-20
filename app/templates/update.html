@@ -1,0 +1,59 @@
+{% extends "main.html" %}
+{% block title %}Alteração de candidato{% endblock %}
+{% block ajax %}
+<script>
+    $(document).ready(function () {
+        $("#submit").on('click', function () {
+            $.ajax({
+                url: 'http://localhost:5000/updateAction',
+                type: "POST",
+                dataType: 'json',
+                data: $("#form").serialize(),
+                success: function (result) {
+                    alert(result['mensagem']);
+                    $("#form input").val("");
+                    $("#descricao").val("");
+                    $("#submit").val("Enviar");
+                },
+                error: function (xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                    alert("houve um erro");
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% block body %}
+<h1>Formulário:</h1>
+<form id="form" action="" method="post">
+    <table border="0">
+        <tbody>
+            <input type="hidden" name="_id" value="{{candidato._id}}"/>
+            <tr>
+                <td class="semestral">Nome completo:</td>
+                <td><input type="text" name="nome" value="{{candidato.nome}}" size="30"/></td>
+            </tr>
+            <tr>
+                <td class="semestral">Login:</td>
+                <td><input type="text" name="login" value="{{candidato.login}}" size="10"/></td>
+            </tr>
+            <tr>
+                <td class="semestral">Senha:</td>
+                <td><input type="password" name="senha" value="{{candidato.senha}}" size="10"/></td>
+            </tr>
+            <tr>
+                <td class="semestral" colspan="2">Fale um pouco de você:</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <textarea id="descricao" name="descricao" rows="6" cols="60">{{candidato.descricao}}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"><input id="submit" type="button" value="Enviar" /></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+{% endblock %}

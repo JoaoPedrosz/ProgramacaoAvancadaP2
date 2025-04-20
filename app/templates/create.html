@@ -1,0 +1,60 @@
+{% extends "main.html" %}
+{% block title %}Criação de candidato{% endblock %}
+{% block ajax %}
+<script>
+    $(document).ready(function () {
+        $("#submit").on('click', function () {
+            $.ajax({
+                url: 'http://localhost:5000/createAction',
+                type: "POST",
+                dataType: 'json',
+                data: $("#form").serialize(),
+                success: function (result) {
+                    alert(result['mensagem']);
+                    $("#form").trigger("reset");
+                },
+                error: function (xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                    alert("houve um erro");
+                }
+            });
+        });
+        $("#clearbtn").on('click', function () {
+            $("#form").trigger("reset");
+        });
+    });
+</script>
+{% endblock %}
+{% block body %}
+<h1>Formulário:</h1>
+<form id="form" action="" method="post">
+    <table border="0">
+        <tbody>
+            <tr>
+                <td class="semestral">Nome completo:</td>
+                <td><input type="text" name="nome" value="" size="30"/></td>
+            </tr>
+            <tr>
+                <td class="semestral">Login:</td>
+                <td><input type="text" name="login" value="" size="10"/></td>
+            </tr>
+            <tr>
+                <td class="semestral">Senha:</td>
+                <td><input type="password" name="senha" value="" size="10"/></td>
+            </tr>
+            <tr>
+                <td class="semestral" colspan="2">Fale um pouco de você:</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <textarea id="descricao" name="descricao" rows="6" cols="60"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><input id="submit" type="button" value="Enviar" /></td>
+                <td><input id="clearbtn" type="button" value="Reset" /></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+{% endblock %}
