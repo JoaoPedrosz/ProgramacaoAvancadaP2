@@ -8,7 +8,8 @@ app.config.from_object(Config)
 
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-mongodb_client = PyMongo(app, uri="mongodb+srv://SEU_USUARIO:SUA_SENHA@URL_CLUSTER_DATABASE?retryWrites=true&w=majority")
+mongodb_client = PyMongo(app, uri="mongodb+srv://joaosilva:om20SnQXDo48LHNF@com759.d8vet.mongodb.net/p2facamp?retryWrites=true&w=majority&appName=COM759")
 db = mongodb_client.db
+
 
 from app import routes

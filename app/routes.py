@@ -51,3 +51,12 @@ def delete(login):
         return jsonify(mensagem='Removido')
     else:
         return jsonify(mensagem='Não removido')
+	
+@app.route("/testmongo")
+def test_mongo():
+    try:
+        db.list_collection_names()
+        return jsonify(status="Conectado ao MongoDB com sucesso!")
+    except Exception as e:
+        return jsonify(status="Erro na conexão", erro=str(e))
+
