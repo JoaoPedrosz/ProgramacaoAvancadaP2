@@ -1,60 +1,50 @@
 {% extends "main.html" %}
-{% block title %}Criação de candidato{% endblock %}
+{% block title %}Criação de nota fiscal{% endblock %}
 {% block ajax %}
 <script>
-    $(document).ready(function () {
-        $("#submit").on('click', function () {
-            $.ajax({
-                url: 'http://localhost:5000/createAction',
-                type: "POST",
-                dataType: 'json',
-                data: $("#form").serialize(),
-                success: function (result) {
-                    alert(result['mensagem']);
-                    $("#form").trigger("reset");
-                },
-                error: function (xhr, resp, text) {
-                    console.log(xhr, resp, text);
-                    alert("houve um erro");
-                }
-            });
-        });
-        $("#clearbtn").on('click', function () {
-            $("#form").trigger("reset");
-        });
+$(function () {
+  $("#submit").click(function () {
+    $.ajax({
+      url: "{{ url_for('createAction') }}",
+      type: "POST",
+      dataType: "json",
+      data: $("#form").serialize(),
+      success: function (res) {
+        alert(res.mensagem);
+        $("#form")[0].reset();
+      },
+      error: function () {
+        alert("Erro ao inserir");
+      }
     });
+  });
+  $("#clearbtn").click(function () {
+    $("#form")[0].reset();
+  });
+});
 </script>
 {% endblock %}
 {% block body %}
-<h1>Formulário:</h1>
-<form id="form" action="" method="post">
-    <table border="0">
-        <tbody>
-            <tr>
-                <td class="semestral">Nome completo:</td>
-                <td><input type="text" name="nome" value="" size="30"/></td>
-            </tr>
-            <tr>
-                <td class="semestral">Login:</td>
-                <td><input type="text" name="login" value="" size="10"/></td>
-            </tr>
-            <tr>
-                <td class="semestral">Senha:</td>
-                <td><input type="password" name="senha" value="" size="10"/></td>
-            </tr>
-            <tr>
-                <td class="semestral" colspan="2">Fale um pouco de você:</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <textarea id="descricao" name="descricao" rows="6" cols="60"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td><input id="submit" type="button" value="Enviar" /></td>
-                <td><input id="clearbtn" type="button" value="Reset" /></td>
-            </tr>
-        </tbody>
-    </table>
+<h1>Formulário de Nota Fiscal</h1>
+<form id="form" method="post">
+  <table>
+    <tr><td>Número:</td>    <td><input name="numero"/></td></tr>
+    <tr><td>Comprador:</td> <td><input name="comprador"/></td></tr>
+    <tr><td>CNPJ:</td>      <td><input name="cnpj"/></td></tr>
+    <tr><td>Endereço:</td>  <td><input name="endereco"/></td></tr>
+    <tr><td>Telefone:</td>  <td><input name="telefone"/></td></tr>
+    <tr><td>Data:</td>      <td><input type="date" name="data"/></td></tr>
+    <tr><td>Valor:</td>     <td><input type="number" step="0.01" name="valor"/></td></tr>
+    <tr>
+      <td>Itens:</td>
+      <td>
+        <textarea name="itens" rows="4" cols="40"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td><button id="submit" type="button">Enviar</button></td>
+      <td><button id="clearbtn" type="button">Reset</button></td>
+    </tr>
+  </table>
 </form>
 {% endblock %}
