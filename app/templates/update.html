@@ -1,49 +1,54 @@
 {% extends "main.html" %}
-{% block title %}Alteração de nota fiscal{% endblock %}
+{% block title %}Alterar Nota Fiscal{% endblock %}
 {% block ajax %}
 <script>
-$(function () {
-  $("#submit").click(function () {
-    $.ajax({
-      url: "{{ url_for('updateAction') }}",
-      type: "POST",
-      dataType: "json",
-      data: $("#form").serialize(),
-      success: function (res) {
-        alert(res.mensagem);
-        $("#form")[0].reset();
-      },
-      error: function () {
-        alert("Erro ao alterar");
-      }
+  $(document).ready(function () {
+    // botão Enviar
+    $("#submit").on('click', function () {
+      $.ajax({
+        url: "{{ url_for('updateAction') }}",
+        type: "POST",
+        dataType: 'json',
+        data: $("#form").serialize(),
+        success: function (res) {
+          alert(res.mensagem);
+          $("#form")[0].reset();
+        },
+        error: function () {
+          alert('Erro ao alterar');
+        }
+      });
+    });
+    // botão Reset
+    $("#clearbtn").on('click', function () {
+      $("#form")[0].reset();
+    });
+    // botão Voltar
+    $("#backbtn").on('click', function () {
+      window.location.href = "{{ url_for('index') }}";
     });
   });
-  $("#clearbtn").click(function () {
-    $("#form")[0].reset();
-  });
-});
 </script>
 {% endblock %}
 {% block body %}
 <h1>Alterar Nota Fiscal</h1>
 <form id="form" method="post">
-  <input type="hidden" name="numero" value="{{ nota.numero }}"/>
+  <input type="hidden" name="numero" value="{{ nota.numero }}" />
   <table>
-    <tr><td>Comprador:</td> <td><input name="comprador"  value="{{ nota.comprador }}"/></td></tr>
-    <tr><td>CNPJ:</td>      <td><input name="cnpj"       value="{{ nota.cnpj }}"/></td></tr>
-    <tr><td>Endereço:</td>  <td><input name="endereco"   value="{{ nota.endereco }}"/></td></tr>
-    <tr><td>Telefone:</td>  <td><input name="telefone"   value="{{ nota.telefone }}"/></td></tr>
-    <tr><td>Data:</td>      <td><input type="date" name="data"   value="{{ nota.data }}"/></td></tr>
-    <tr><td>Valor:</td>     <td><input type="number" step="0.01" name="valor" value="{{ nota.valor }}"/></td></tr>
+    <tr><td>Comprador:</td> <td><input name="comprador" value="{{ nota.comprador }}" /></td></tr>
+    <tr><td>CNPJ:</td>      <td><input name="cnpj" value="{{ nota.cnpj }}" /></td></tr>
+    <tr><td>Endereço:</td>  <td><input name="endereco" value="{{ nota.endereco }}" /></td></tr>
+    <tr><td>Telefone:</td>  <td><input name="telefone" value="{{ nota.telefone }}" /></td></tr>
+    <tr><td>Data:</td>      <td><input type="date" name="data" value="{{ nota.data }}" /></td></tr>
+    <tr><td>Valor:</td>     <td><input type="number" step="0.01" name="valor" value="{{ nota.valor }}" /></td></tr>
     <tr>
       <td>Itens:</td>
-      <td>
-        <textarea name="itens" rows="4" cols="40">{{ nota.itens }}</textarea>
-      </td>
+      <td><textarea name="itens" rows="4" cols="40">{{ nota.itens }}</textarea></td>
     </tr>
     <tr>
       <td><button id="submit" type="button">Enviar</button></td>
       <td><button id="clearbtn" type="button">Reset</button></td>
+      <td><button id="backbtn" type="button">Voltar</button></td>
     </tr>
   </table>
 </form>
