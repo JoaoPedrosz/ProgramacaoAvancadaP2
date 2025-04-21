@@ -1,25 +1,26 @@
-from flask import Flask, request, jsonify, render_template
-from bson import json_util, ObjectId
+from flask import render_template, request, jsonify
 from app import app, db
+from bson import ObjectId
+from flask import redirect, url_for
 
-# rota padrão: lista as notas em HTML
+# 1) Listagem HTML (página inicial)
 @app.route('/')
 def index():
     notas = list(db.notafiscal.find({}).sort("numero", 1))
     return render_template('listNotas.html', notas=notas)
 
-# rota JSON: lista todas as notas
+# 2) Listagem JSON (API)
 @app.route('/notas')
 def listar_notas():
     notas = list(db.notafiscal.find({}, {"_id": 0}))
     return jsonify(status="OK", notas=notas)
 
-# exibe o formulário de criação
+# 3) Formulário de criação
 @app.route('/create')
 def create():
     return render_template('create.html')
 
-# processa criação
+# 4) Ação de criação
 @app.route('/createAction', methods=['POST'])
 def createAction():
     data = request.form.to_dict()
@@ -29,21 +30,23 @@ def createAction():
             return jsonify(mensagem='Inserido')
     return jsonify(mensagem='Não inserido')
 
-# exibe o formulário de edição
+# 5) Formulário de edição
 @app.route('/update/<string:numero>')
 def update(numero):
     nota = db.notafiscal.find_one({"numero": numero})
-    if nota:
-        return render_template('update.html', nota=nota)
-    return jsonify(mensagem='Nota não existe')
+    if not nota:
+        return jsonify(mensagem='Nota não existe'), 404
+    return render_template('update.html', nota=nota)
 
-# processa edição
+# 6) Ação de edição
 @app.route('/updateAction', methods=['POST'])
 def updateAction():
     data = request.form.to_dict()
-    numero = data.pop('numero', None)
-    if numero:
+    original = data.pop('original_numero', None)
+    new_numero = data.get('numero')
+    if original and new_numero:
         update_fields = {
+            'numero':    new_numero,
             'comprador': data.get('comprador'),
             'cnpj':       data.get('cnpj'),
             'endereco':   data.get('endereco'),
@@ -52,15 +55,21 @@ def updateAction():
             'valor':      data.get('valor'),
             'itens':      data.get('itens')
         }
-        res = db.notafiscal.update_one({"numero": numero}, {"$set": update_fields})
+        res = db.notafiscal.update_one(
+            {"numero": original},
+            {"$set": update_fields}
+        )
         if res.modified_count > 0:
             return jsonify(mensagem='Alterado')
     return jsonify(mensagem='Não alterado')
 
-# exclui nota
+
+# rota de exclusão: remove e redireciona para a listagem
 @app.route('/delete/<string:numero>')
 def delete(numero):
     res = db.notafiscal.delete_one({"numero": numero})
-    if res.deleted_count > 0:
-        return jsonify(mensagem='Removido')
-    return jsonify(mensagem='Não removido')
+    # aqui você pode checar res.deleted_count se quiser
+    return redirect(url_for('index'))
+
+
+

@@ -1,54 +1,125 @@
 {% extends "main.html" %}
+
 {% block title %}Alterar Nota Fiscal{% endblock %}
+
 {% block ajax %}
 <script>
-  $(document).ready(function () {
-    // botão Enviar
-    $("#submit").on('click', function () {
-      $.ajax({
-        url: "{{ url_for('updateAction') }}",
-        type: "POST",
-        dataType: 'json',
-        data: $("#form").serialize(),
-        success: function (res) {
-          alert(res.mensagem);
-          $("#form")[0].reset();
-        },
-        error: function () {
-          alert('Erro ao alterar');
+$(function () {
+  // Submissão via AJAX
+  $("#submit").click(() => {
+    $.ajax({
+      url: "{{ url_for('updateAction') }}",
+      type: "POST",
+      dataType: "json",
+      data: $("#form").serialize(),
+      success: res => {
+        alert(res.mensagem);
+        if (res.mensagem === 'Alterado') {
+          window.location.href = "{{ url_for('index') }}";
         }
-      });
-    });
-    // botão Reset
-    $("#clearbtn").on('click', function () {
-      $("#form")[0].reset();
-    });
-    // botão Voltar
-    $("#backbtn").on('click', function () {
-      window.location.href = "{{ url_for('index') }}";
+      },
+      error: () => alert("Erro ao alterar")
     });
   });
+  // Reset e voltar
+  $("#clearbtn").click(() => $("#form")[0].reset());
+  $("#backbtn").click(() => window.location.href = "{{ url_for('index') }}");
+});
 </script>
 {% endblock %}
+
 {% block body %}
 <h1>Alterar Nota Fiscal</h1>
-<form id="form" method="post">
-  <input type="hidden" name="numero" value="{{ nota.numero }}" />
+<form id="form">
   <table>
-    <tr><td>Comprador:</td> <td><input name="comprador" value="{{ nota.comprador }}" /></td></tr>
-    <tr><td>CNPJ:</td>      <td><input name="cnpj" value="{{ nota.cnpj }}" /></td></tr>
-    <tr><td>Endereço:</td>  <td><input name="endereco" value="{{ nota.endereco }}" /></td></tr>
-    <tr><td>Telefone:</td>  <td><input name="telefone" value="{{ nota.telefone }}" /></td></tr>
-    <tr><td>Data:</td>      <td><input type="date" name="data" value="{{ nota.data }}" /></td></tr>
-    <tr><td>Valor:</td>     <td><input type="number" step="0.01" name="valor" value="{{ nota.valor }}" /></td></tr>
+    <!-- Guarda o número original para lookup -->
+    <input type="hidden" name="original_numero" value="{{ nota.numero }}" />
     <tr>
-      <td>Itens:</td>
-      <td><textarea name="itens" rows="4" cols="40">{{ nota.itens }}</textarea></td>
+      <td>Número:</td>
+      <td>
+        <input name="numero"
+               type="text"
+               value="{{ nota.numero }}"
+               required
+               pattern="\d+"
+               title="Digite apenas números" />
+      </td>
     </tr>
     <tr>
-      <td><button id="submit" type="button">Enviar</button></td>
+      <td>Comprador:</td>
+      <td>
+        <input name="comprador"
+               type="text"
+               value="{{ nota.comprador }}"
+               required
+               pattern="[A-Za-zÀ-ú ]+"
+               title="Digite apenas letras e espaços" />
+      </td>
+    </tr>
+    <tr>
+      <td>CNPJ:</td>
+      <td>
+        <input name="cnpj"
+               type="text"
+               value="{{ nota.cnpj }}"
+               required
+               pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}"
+               placeholder="00.000.000/0000-00"
+               title="Formato: 00.000.000/0000-00" />
+      </td>
+    </tr>
+    <tr>
+      <td>Endereço:</td>
+      <td>
+        <input name="endereco"
+               type="text"
+               value="{{ nota.endereco }}"
+               required minlength="5"
+               title="Informe ao menos 5 caracteres" />
+      </td>
+    </tr>
+    <tr>
+      <td>Telefone:</td>
+      <td>
+        <input name="telefone"
+               type="text"
+               value="{{ nota.telefone }}"
+               required
+               pattern="\(\d{2}\) \d{4,5}-\d{4}"
+               placeholder="(11) 99999-1234"
+               title="Formato: (99) 99999-9999" />
+      </td>
+    </tr>
+    <tr>
+      <td>Data:</td>
+      <td><input name="data" type="date" value="{{ nota.data }}" required /></td>
+    </tr>
+    <tr>
+      <td>Valor:</td>
+      <td>
+        <input name="valor"
+               type="number"
+               step="0.01"
+               min="0"
+               value="{{ nota.valor }}"
+               required
+               title="Informe valor numérico" />
+      </td>
+    </tr>
+    <tr>
+      <td>Itens:</td>
+      <td>
+        <textarea name="itens"
+                  rows="4"
+                  cols="40"
+                  required minlength="3"
+                  title="Descreva os itens da nota">{{ nota.itens }}</textarea>
+      </td>
+    </tr>
+    <tr>
+      <td><button id="submit"   type="button">Enviar</button></td>
       <td><button id="clearbtn" type="button">Reset</button></td>
-      <td><button id="backbtn" type="button">Voltar</button></td>
+      <td><button id="backbtn"  type="button">Voltar</button></td>
     </tr>
   </table>
 </form>

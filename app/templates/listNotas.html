@@ -1,45 +1,52 @@
 {% extends "main.html" %}
-{% block title %}Listagem de notas fiscais{% endblock %}
+
+{% block title %}Listagem de Notas Fiscais{% endblock %}
+
 {% block ajax %}{% endblock %}
+
 {% block body %}
-<h1>Listagem de Notas Fiscais</h1>
-<p>
-  <a href="{{ url_for('create') }}">
-    <button type="button">Criar Nova Nota</button>
-  </a>
-</p>
-<table border="1" cellpadding="5" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Número</th>
-      <th>Comprador</th>
-      <th>CNPJ</th>
-      <th>Endereço</th>
-      <th>Telefone</th>
-      <th>Data</th>
-      <th>Valor</th>
-      <th>Itens</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for nota in notas %}
-    <tr>
-      <td>{{ nota.numero }}</td>
-      <td>{{ nota.comprador }}</td>
-      <td>{{ nota.cnpj }}</td>
-      <td>{{ nota.endereco }}</td>
-      <td>{{ nota.telefone }}</td>
-      <td>{{ nota.data }}</td>
-      <td>{{ nota.valor }}</td>
-      <td>{{ nota.itens }}</td>
-      <td>
-        <a href="{{ url_for('update', numero=nota.numero) }}">Editar</a> |
-        <a href="{{ url_for('delete', numero=nota.numero) }}"
-           onclick="return confirm('Confirma exclusão?')">Excluir</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <h1>Listagem de Notas Fiscais</h1>
+
+  <p>
+    <a href="{{ url_for('create') }}">
+      <button type="button">Criar Nova Nota</button>
+    </a>
+  </p>
+
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Número</th>
+        <th>Comprador</th>
+        <th>CNPJ</th>
+        <th>Endereço</th>
+        <th>Telefone</th>
+        <th>Data</th>
+        <th>Valor</th>
+        <th>Itens</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for nota in notas %}
+      <tr>
+        <td>{{ nota.numero }}</td>
+        <td>{{ nota.comprador }}</td>
+        <td>{{ nota.cnpj }}</td>
+        <td>{{ nota.endereco }}</td>
+        <td>{{ nota.telefone }}</td>
+        <td>{{ nota.data }}</td>
+        <td>{{ nota.valor }}</td>
+        <td>{{ nota.itens }}</td>
+        <td>
+          <a href="{{ url_for('update', numero=nota.numero) }}">Editar</a> |
+          <a href="{{ url_for('delete', numero=nota.numero) }}"
+             onclick="return confirm('Confirma exclusão?')">
+            Excluir
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
